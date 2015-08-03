@@ -1,0 +1,24 @@
+{
+  "name": "expressbasics",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ccates23/expressbasics.git"
+  },
+  "author": "Chad Cates <cates.chad@gmail.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/ccates23/expressbasics/issues"
+  },
+  "homepage": "https://github.com/ccates23/expressbasics#readme",
+  "dependencies": {
+    "ejs": "^2.3.3",
+    "express": "^4.13.3",
+    "less-middleware": "^2.0.1"
+  }
+}
