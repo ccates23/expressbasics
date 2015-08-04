@@ -1,9 +1,15 @@
 var fs = require('fs');
+
 var express = require('express');
+var lessCSS = require('less-middleware');
 var morgan = require('morgan');
-var loggly = require('loggly');
+var bodyParser = require('body-parser');
+
+
 var routes = require('./routes/index');
 var pizza = require('./routes/pizza');
+var chickennuggets = require('./routes/chickennuggets');
+
 
 var app = express();
 
@@ -12,45 +18,49 @@ app.set('case sensitive routing', true);
 
 app.locals.title = 'aweso.me';
 
-app.use(function (req, res, next) {
-  // logging at the top
-  console.log('Request at ' + new Date().toISOString());
-  next();
-});
+app.use(lessCSS('public'));
+
 var logStream = fs.createWriteStream('access.log', {flags: 'a'});
 app.use(morgan('combined', {stream: logStream}));
 app.use(morgan('dev'));
 
- var client = loggly.createClient({
-    token: "fe19754b-ea8c-44bc-a1b3-f26896e81cba",
-    subdomain: "chadcates",
-    tags: ["NodeJS"],
-    json:true
-});
-
-
 app.use(function (req, res, next) {
+  var client = require('./lib/loggly')('incoming');
+
   client.log({
     ip: req.ip,
     date: new Date(),
     url: req.url,
-    status: req.statusCode,
+    status: res.statusCode,
     method: req.method
   });
   next();
 });
 
-
 app.use(express.static('public'));
+
+app.use(bodyParser.urlencoded({extended: false}))
 
 app.use('/', routes);
 app.use('/pizza', pizza);
+app.use('/chickennuggets', chickennuggets);
 
 app.use(function (req, res) {
   res.status(403).send('Unauthorized!');
 });
 
 app.use(function (err, req, res, next) {
+  var client = require('./lib/loggly')('error');
+
+  client.log({
+    ip: req.ip,
+    date: new Date(),
+    url: req.url,
+    status: res.statusCode,
+    method: req.method,
+    stackTrace: err.stack
+  });
+
   // pass 4 arguments to create an error handling middleware
   console.log('ERRRRRRRRRR', err.stack);
   res.status(500).send('My Bad');

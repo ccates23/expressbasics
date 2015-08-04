@@ -17,6 +17,7 @@
   },
   "homepage": "https://github.com/ccates23/expressbasics#readme",
   "dependencies": {
+    "body-parser": "^1.13.3",
     "ejs": "^2.3.3",
     "express": "^4.13.3",
     "less-middleware": "^2.0.1",
