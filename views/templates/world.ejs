@@ -1,22 +1,16 @@
-<!DOCTYPE html>
-<html lang="en-US">
- <head>
- <meta charset="utf-8">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
- <title></title>
- <link rel="stylesheets" href="/sylesheets/main.css">
-
- <head>
- <body>
-     <h1> My Site Title <%= title %></h1>
-
-      </body>
-      <html>
-
-
-
-
-
-
-
+<!doctype html>
+<html>
+  <head>
+    <title><%= title %> | Awesome Things</title>
+  </head>
+  <body>
+    <h1>My site is <%= title %></h1>
+    <h2><%= welcome %></h2>
+    <h3>These are the most awesome things...</h3>
+    <ul>
+      <% awesomeThings.forEach(function (thing) { %>
+        <li><%= thing.name %> is awesome!</li>
+      <% }); %>
+    </ul>
+  </body>
+</html>

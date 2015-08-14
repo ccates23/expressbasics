@@ -1,28 +1,44 @@
+//  npm variables
+
 var fs = require('fs');
-
-
 var express = require('express');
 var lessCSS = require('less-middleware');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
+var session = require('express-session');
 
-
+//  required routes
 
 var routes = require('./routes/index');
 var pizza = require('./routes/pizza');
 var chickennuggets = require('./routes/chickennuggets');
 var imgur = require('./routes/imgur');
-
+var user = require('./routes/user');
 
 var app = express();
 
 app.set('view engine', 'ejs');
 app.set('case sensitive routing', true);
 
-app.locals.title = 'aweso.me';
+app.locals.title = 'Awesome';
 
 app.use(bodyParser.urlencoded({extended: true}));
 app.use(lessCSS('public'));
+
+app.use(session({
+  secret: 'mason',
+  resave: false,
+  saveUninitialized: true
+}));
+
+app.use(function (req, res, next) {
+ req.session.count = 1;
+ console.log('SESSION>>>>>>>>>>>>>>>>>', req.session);
+ console.log('SESSION ID>>>>>>>>>>>>', req.sessionID)
+ next();
+});
+
+
 
 var logStream = fs.createWriteStream('access.log', {flags: 'a'});
 app.use(morgan('combined', {stream: logStream}));
@@ -43,11 +59,14 @@ app.use(function (req, res, next) {
 
 app.use(express.static('public'));
 
+require('./lib/mongodb');
+
 
 app.use('/', routes);
 app.use('/pizza', pizza);
 app.use('/chickennuggets', chickennuggets);
 app.use('/imgur', imgur);
+app.use('/user', user);
 
 app.use(function (req, res) {
   res.status(403).send('Unauthorized!');
